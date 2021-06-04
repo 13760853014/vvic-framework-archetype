@@ -1,0 +1,50 @@
+globalConfig:
+  author: 请填写您的姓名或邮箱（如：zhouyi@vvic.com）
+  open: false
+  # mybatis-plus ID 生成策略，如：AUTO（数据库ID自增）、NONE（未设置主键类型）、INPUT（用户输入ID）、UUID（全局唯一ID）、ID_WORKER（全局唯一ID）、ID_WORKER_STR（字符串全局唯一ID，idWorker 的字符串表示）
+  idType: INPUT
+  # 是否覆盖已有同名文件
+  fileOverride: true
+  dateType: ONLY_DATE
+  baseResultMap: false
+  baseColumnList: false
+dataSourceConfig:
+  # 数据库 jdbc url
+  url: jdbc:mysql://192.168.2.31:3306/vvic?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=Asia/Shanghai&zeroDateTimeBehavior=CONVERT_TO_NULL
+  # mysql 驱动
+  driverName: com.mysql.cj.jdbc.Driver
+  # 数据库用户名
+  username: vvic
+  # 数据库密码
+  password: vvic
+packageConfig:
+  # 父包名称
+  parent: com.vvic.shop
+  moduleName: order
+  entity: model
+  service: service
+  serviceImpl: service.impl
+  mapper: dao
+  xml: mapper
+  controller: rest.back
+  pathInfo:
+    # model 模块路径
+    model_module_path: D:\vvic_demo\shop-order\shop-order-model
+    # service 模块路径
+    service_module_path: D:\vvic_demo\shop-order\shop-order-service
+strategyConfig:
+  naming: underline_to_camel
+  columnNaming: underline_to_camel
+  entityLombokModel: false
+  superMapperClass: com.vvic.framework.data.mybatis.IBaseMapper
+  superServiceClass: com.vvic.framework.data.service.IBaseService
+  superServiceImplClass: com.vvic.framework.data.service.BaseServiceImpl
+  controllerMappingHyphenStyle: false
+  restControllerStyle: true
+  tablePrefix:
+    # 数据库表的前缀，如：t_
+    - t_
+  include:
+    # 数据库表，请按照格式写需要生成的数据库表代码
+    - t_item
+    - t_shop

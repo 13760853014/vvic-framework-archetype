@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN"  packages="com.vvic.framework.core.log.plugin">
+	<!--
+       JVM启动参数：
+       log.level：日志级别，一般只用于控制业务的日志级别，默认为DEBUG
+       log.basePath：日志文件路径，默认为./logs
+       log.appId：日志中心的应用ID
+       log.pattern：日志Pattern名称，包含 vvic、simple、custom，默认为simple
+       log.customPattern：自定义日志Pattern
+     -->
+	<Properties>
+		<!-- 日志Pattern定义：简单类型Pattern -->
+		<property name="simpleLogPattern">%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] [%X{requestId}] %-5level %c.%M:%L - %msg%n</property>
+		<!-- 日志Pattern：日志中心日志Pattern -->
+		<property name="vvicLogPattern">%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] [%X{appId}] [%X{requestId}] [%X{requestUrl}] [%X{remoteIp}] [%X{localIp}] %-5level %l - %msg%n</property>
+		<!-- 日志Pattern：自定义日志Pattern，使用-Dlog.customPattern指定，默认取simpleLogPattern -->
+		<property name="customLogPattern">${sys:log.customPattern:-${simpleLogPattern}}</property>
+		<!-- 日志Pattern：根据log.pattern选择实际使用的日志Pattern，默认使用simpleLogPattern -->
+		<property name="logPattern">${decode:${sys:log.pattern},vvic,${vvicLogPattern},custom,${customLogPattern},${simpleLogPattern}}</property>
+		<!-- 日志级别，默认为INFO -->
+		<property name="logLevel">${sys:log.level:-INFO}</property>
+		<!-- 日志中心：应用ID，从config/bootstrap.properties配置文件读取vvic.app.id属性 -->
+		<property name="appId">${bundle:config/bootstrap:vvic.app.id}</property>
+		<!-- 日志中心：服务名称，从config/bootstrap.properties配置文件读取vvic.app.name属性 -->
+		<property name="serviceName">${bundle:config/bootstrap:vvic.app.name}</property>
+	</Properties>
+	<Appenders>
+		<Console name="Console" target="SYSTEM_OUT">
+			<PatternLayout pattern="${logPattern}" />
+		</Console>
+	</Appenders>
+	<Loggers>
+		<!-- 各应用按实际情况自行定义相关类的输出级别 -->
+		<AsyncLogger name="com.vvic.framework" level="${logLevel}" />
+
+		<AsyncRoot level="INFO" includeLocation="true">
+			<AppenderRef ref="Console" />
+		</AsyncRoot>
+	</Loggers>
+</Configuration>

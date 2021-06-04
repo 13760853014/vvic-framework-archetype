@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.vvic.framework</groupId>
+        <artifactId>vvic-framework</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+
+    <groupId>${groupId}</groupId>
+    <artifactId>${artifactId}</artifactId>
+    <version>${version}</version>
+    <packaging>pom</packaging>
+
+    <properties>
+        <java.version>1.8</java.version>
+        <maven.compiler.version>3.0</maven.compiler.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!--model层依赖-->
+            <dependency>
+                <groupId>${groupId}</groupId>
+                <artifactId>${artifactId}-model</artifactId>
+                <version>${version}</version>
+            </dependency>
+            <!--api层依赖-->
+            <dependency>
+                <groupId>${groupId}</groupId>
+                <artifactId>${artifactId}-api</artifactId>
+                <version>${version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <plugins>
+<!--            <plugin>-->
+<!--                <artifactId>maven-deploy-plugin</artifactId>-->
+<!--                <configuration>-->
+<!--                    <skip>true</skip>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
+        </plugins>
+        <!--插件管理-->
+        <pluginManagement>
+            <plugins>
+                <!--发布插件-->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>2.8.2</version>
+                    <configuration>
+                        <skip>true</skip>
+                    </configuration>
+                </plugin>
+
+                <!--代码编译插件-->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven.compiler.version}</version>
+                    <configuration>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
+                        <testSource>${java.version}</testSource>
+                        <testTarget>${java.version}</testTarget>
+                    </configuration>
+                </plugin>
+
+                <!--springboot 打包插件-->
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>repackage</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <!--依赖 docker 插件-->
+                <plugin>
+                    <groupId>com.spotify</groupId>
+                    <artifactId>dockerfile-maven-plugin</artifactId>
+                    <version>1.4.10</version>
+                    <configuration>
+                        <username>${DOCKER_REPO_USERNAME}</username>
+                        <password>${DOCKER_REPO_PASSWORD}</password>
+                        <repository>${DOCKER_REPO_HOST}/vvic/${app_name}</repository>
+                        <tag>${BUILD_NUMBER}</tag>
+                        <buildArgs>
+                            <SOURCE_JAR_FILE>target/${project.build.finalName}.jar</SOURCE_JAR_FILE>
+                            <DOCKER_JAR_FILE>/app/${project.build.finalName}.jar</DOCKER_JAR_FILE>
+                            <DOCKER_APP_NAME>${projectName}</DOCKER_APP_NAME>
+                        </buildArgs>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <modules>
+        <module>${artifactId}-model</module>
+        <module>${artifactId}-api</module>
+        <module>${artifactId}-service</module>
+    </modules>
+
+    <repositories>
+        <repository>
+            <id>vvic-pangge-nexus</id>
+            <name>Local Nexus Repository</name>
+            <url>${releaseRepositoryAddress}</url>
+        </repository>
+        <repository>
+            <id>vvic-nexus3-snapshots</id>
+            <name>Local Nexus Repository</name>
+            <url>${snapshotRepositoryAddress}</url>
+        </repository>
+    </repositories>
+</project>
